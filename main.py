@@ -12,34 +12,40 @@ from unsupervised_models.unsupervised import UnsupervisedModels
 st.set_page_config(layout="wide")
 st.title(f"Topic Analysis")
 df = None 
-
-
-
 input_option = st.sidebar.radio("Input option: ", ["Upload data", "Product Link"])
-mode_option = st.sidebar.radio("Mode option: ", ["Topic Discovery", "Topic Classification"])
+if df is None:
+    if input_option == "Upload data":
+        uploaded_file = st.sidebar.file_uploader("Upload your review data here", type = [".csv"])
+        if uploaded_file:
+            @st.cache_data
+            def get_data_from_file(uploaded_file):
+                df = pd.read_csv(uploaded_file)
+                df = df.dropna(subset = "comment").reset_index()
+                return df
+            df = get_data_from_file(uploaded_file)
+    else:
+        crawler = ShopeeCrawler()
+        link = st.sidebar.text_input("$\\textsf{\Large Enter Product Link}$")
+        st.write(link)
 
-if input_option == "Upload data":
-    uploaded_file = st.sidebar.file_uploader("Upload your review data here", type = [".csv"])
-    if uploaded_file:
-        df = pd.read_csv(uploaded_file)
-        df = df.dropna(subset = "comment").reset_index()
-else:
-    crawler = ShopeeCrawler()
-    link = st.sidebar.text_input("$\\textsf{\Large Enter Product Link}$")
-    if link:
-        @st.cache_data
-        def get_data_from_link():
-            shop_id, item_id = crawler.get_ids_from_link(link)
-            data = crawler.Crawl(item_id, shop_id)
-            df = pd.DataFrame(data)
-            return df
-        df = get_data_from_link()
-        df = df.dropna(subset = "comment").reset_index()
-        download_content = df.to_csv(encoding = "utf-16")
-        st.sidebar.download_button(label="Download data as csv file",
-            data=download_content,
-            file_name="data.csv",
-        )
+        if link:
+            @st.cache_data
+            def get_data_from_link():
+                shop_id, item_id = crawler.get_ids_from_link(link)
+                data = crawler.Crawl(item_id, shop_id)
+                df = pd.DataFrame(data)
+                return df
+            data = get_data_from_link()
+            df = data.copy()
+            df = df.dropna(subset = "comment").reset_index()
+            download_content = df.to_csv(encoding = "utf-16")
+            st.sidebar.download_button(label="Download data as csv file",
+                data=download_content,
+                file_name="data.csv",
+            )
+            st.dataframe(df)
+
+mode_option = st.sidebar.radio("Mode option: ", ["Topic Discovery", "Topic Classification"])
 if df is not None:
     topic_num = st.sidebar.number_input("Number of topics", step = 1, min_value = 2, max_value = len(df), format = "%d")
     if mode_option == "Topic Discovery":
@@ -134,10 +140,14 @@ if df is not None:
             text = select_row["original"].replace("\n", "  \n  ").replace(":", ": ")
             text = replace_colored(text, inference_result, topic_higlight - 1, "red")
             col2_1.write(text)
-        
+        reset = st.button("Reset")
+        if reset:
+            st.cache_data.clear()
+            st.cache_resource.clear()
 
     else:
         pass
+
 else: 
     st.text("Select data on sidebar to get started")
 
