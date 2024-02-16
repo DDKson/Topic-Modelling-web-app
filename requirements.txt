@@ -7,8 +7,6 @@ gensim
 requests
 datetime
 requests
-json
-string
 octis
 scikit-learn
 top2vec
