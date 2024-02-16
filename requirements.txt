@@ -11,3 +11,4 @@ octis
 scikit-learn
 top2vec
 bertopic
+pyLDAvis
