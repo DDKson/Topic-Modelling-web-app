@@ -11,4 +11,4 @@ octis
 scikit-learn
 top2vec
 bertopic
-pyLDAvis
+pyLDAvis == 3.4.1 
