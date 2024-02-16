@@ -44,6 +44,11 @@ if df is None:
                 file_name="data.csv",
             )
             st.dataframe(df)
+reset = st.sidebar.button("Reset")
+if reset:
+    df = None
+    st.cache_data.clear()
+    st.cache_resource.clear()
 
 mode_option = st.sidebar.radio("Mode option: ", ["Topic Discovery", "Topic Classification"])
 if df is not None:
@@ -140,10 +145,7 @@ if df is not None:
             text = select_row["original"].replace("\n", "  \n  ").replace(":", ": ")
             text = replace_colored(text, inference_result, topic_higlight - 1, "red")
             col2_1.write(text)
-        reset = st.button("Reset")
-        if reset:
-            st.cache_data.clear()
-            st.cache_resource.clear()
+
 
     else:
         pass
