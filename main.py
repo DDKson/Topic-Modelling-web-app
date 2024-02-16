@@ -10,13 +10,10 @@ from data_crawler.Shopee_crawl import ShopeeCrawler
 from unsupervised_models.unsupervised import UnsupervisedModels
 
 st.set_page_config(layout="wide")
-
 st.title(f"Topic Analysis")
 df = None 
 
-color_names = ["red", "green", "blue", "yellow", "orange", "purple",
-                "pink", "turquoise", "aqua", "magenta", "lime", "teal",
-                "coral", "lavender", "gray", "black", "white"]
+
 
 input_option = st.sidebar.radio("Input option: ", ["Upload data", "Product Link"])
 mode_option = st.sidebar.radio("Mode option: ", ["Topic Discovery", "Topic Classification"])
@@ -61,7 +58,7 @@ if df is not None:
             st.markdown(f"### Coherence Score: {round(lda_model.evaluation['Coherence Score'], 2)}, Topic Diversity: {round(lda_model.evaluation['Topic Diversity'], 2)}")
             col1, col2 = st.columns((2, 1))
             with col1:
-                components.v1.html(html_string, width=3000, height=800)
+                components.v1.html(html_string, width=1500, height=800)
 
             def format_topics_sentences(ldamodel, corpus, texts):
                 sent_topics_df = pd.DataFrame()
@@ -91,12 +88,19 @@ if df is not None:
                         sort=False
                         )
                     ])
-                fig.update_layout(title={
+                fig.update_layout(autosize=True, width=500, height=800, title={
                     'text': "Topic Distribution",
                     'y':0.9,
                     'x':0.5,
                     'xanchor': 'center',
-                    'yanchor': 'top'})
+                    'yanchor': 'top'},
+                    legend=dict(
+                    orientation="h",
+                    yanchor="bottom",
+                    y=-0.25,
+                    xanchor="center",
+                    x=0.5
+                ))
                 st.plotly_chart(fig)
 
             st.markdown("# Individual review analysis")
