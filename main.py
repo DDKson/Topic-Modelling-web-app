@@ -26,7 +26,6 @@ if df is None:
     else:
         crawler = ShopeeCrawler()
         link = st.sidebar.text_input("$\\textsf{\Large Enter Product Link}$")
-        st.write(link)
 
         if link:
             @st.cache_data
@@ -43,7 +42,6 @@ if df is None:
                 data=download_content,
                 file_name="data.csv",
             )
-            st.dataframe(df)
 reset = st.sidebar.button("Reset")
 if reset:
     df = None
