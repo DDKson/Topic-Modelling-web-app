@@ -150,5 +150,5 @@ if df is not None:
 
 else: 
     st.text("Select data on sidebar to get started")
-
+    st.text("Zoom out your browser for better experience")
 
